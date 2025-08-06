@@ -13,6 +13,10 @@
     #define RADIO_BUSY_PIN      14
     #define RADIO_RXEN          32
     #define RADIO_TXEN          25
+    //Uncomment and comment RADIO_TXEN if connect DIO2 to TXEN
+    //#define SX126X_DIO2_AS_RF_SWITCH
+    //Uncomment if using E22-400M30S
+    //#define SX126X_DIO3_TCXO_VOLTAGE 2.2
 
     //  Display
     #undef  OLED_SDA
