@@ -34,6 +34,10 @@
     //  OTHER
     #define BUTTON_PIN          15
     #define BATTERY_PIN         35
+    //Uncomment if using INA219
+    //#define HAS_INA219
+    //#define INA219_ADDR       0x40
+    //#define INA219_MULTIPLIER 1.0f
 
     #define HAS_BT_CLASSIC
 

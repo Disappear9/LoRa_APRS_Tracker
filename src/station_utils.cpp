@@ -260,7 +260,13 @@ namespace STATION_Utils {
                 comment += "V (";
                 comment += batteryChargeCurrent;
                 comment += "%)";
-            #elif defined(BATTERY_PIN) && !defined(HAS_AXP192) && !defined(HAS_AXP2101)
+            #elif defined(HAS_INA219)
+                comment += " Bat=";
+                comment += batteryVoltage;
+                comment += "V (";
+                comment += batteryChargeCurrent;
+                comment += "mA)";
+            #elif defined(BATTERY_PIN) && !defined(HAS_AXP192) && !defined(HAS_AXP2101) && !defined(HAS_INA219)
                 comment += " Bat=";
                 comment += String(batteryVoltage.toFloat(),2);
                 comment += "V";

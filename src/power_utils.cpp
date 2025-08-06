@@ -31,6 +31,14 @@
     XPowersAXP2101 PMU;
 #endif
 
+#if defined(HAS_INA219)
+    #include <Adafruit_INA219.h>
+    #include <Wire.h>
+    #ifndef INA219_ADDR
+        #define INA219_ADDR 0x40
+    #endif
+    Adafruit_INA219 ina219(INA219_ADDR);
+#endif
 
 extern Configuration    Config;
 extern logging::Logger  logger;
@@ -42,7 +50,7 @@ uint32_t    batteryMeasurmentTime   = 0;
 bool        pmuInterrupt;
 float       lora32BatReadingCorr    = 6.5; // % of correction to higher value to reflect the real battery voltage (adjust this to your needs)
 bool        disableGPS;
-
+bool        INA219Init                      = false;
 
 namespace POWER_Utils {
 
@@ -53,6 +61,13 @@ namespace POWER_Utils {
     double getBatteryVoltage() {
     #if defined(HAS_AXP192) || defined(HAS_AXP2101)
         return (PMU.getBattVoltage() / 1000.0);
+    #elif defined(HAS_INA219)
+        if(INA219Init) {
+            return ina219.getBusVoltage_V();
+        } else {
+            logger.log(logging::LoggerLevel::LOGGER_LEVEL_ERROR, "INA219", "INA219 not Init!");
+            return 0.0f;
+        }
     #else
         #ifdef BATTERY_PIN
             #ifdef ADC_CTRL
@@ -149,6 +164,9 @@ namespace POWER_Utils {
         #endif
         #ifdef HAS_AXP2101
             return PMU.getBatteryPercent();
+        #endif
+        #ifdef HAS_INA219
+            return ina219.getCurrent_mA() * INA219_MULTIPLIER;
         #endif
     }
 
@@ -417,6 +435,16 @@ namespace POWER_Utils {
 
         #ifdef BATTERY_PIN
             pinMode(BATTERY_PIN, INPUT);
+        #endif
+
+        #ifdef HAS_INA219
+            if (ina219.begin()) {
+                INA219Init = true;
+                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "INA219", "Found INA219");
+            }
+            else {
+                logger.log(logging::LoggerLevel::LOGGER_LEVEL_ERROR, "INA219", "Failed to find INA219");
+            }
         #endif
 
         #ifdef VEXT_CTRL
