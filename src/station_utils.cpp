@@ -214,7 +214,7 @@ namespace STATION_Utils {
             int sendCommentAfterXBeacons = ((winlinkCommentState || Config.battery.sendVoltageAlways) ? 1 : Config.sendCommentAfterXBeacons);
 
             if (Config.battery.sendVoltage && !Config.battery.voltageAsTelemetry) {
-                #if defined(HAS_AXP192) || defined(HAS_AXP2101)
+                #if defined(HAS_AXP192) || defined(HAS_AXP2101) || defined(HAS_INA219)
                     String batteryChargeCurrent = POWER_Utils::getBatteryInfoCurrent();
                     #if defined(HAS_AXP192)
                         comment += " Bat=";
@@ -228,6 +228,12 @@ namespace STATION_Utils {
                         comment += "V (";
                         comment += batteryChargeCurrent;
                         comment += "%)";
+                    #elif defined(HAS_INA219)
+                        comment += " Bat=";
+                        comment += batteryVoltage;
+                        comment += "V (";
+                        comment += batteryChargeCurrent;
+                        comment += "mA)";
                     #endif
                 #elif defined(BATTERY_PIN)
                     comment += " Bat=";

@@ -50,6 +50,14 @@
     XPowersAXP2101 PMU;
 #endif
 
+#ifdef HAS_INA219
+    #include <Adafruit_INA219.h>
+    #ifndef INA219_ADDR
+        #define INA219_ADDR 0x40
+    #endif
+    Adafruit_INA219 ina219(INA219_ADDR);
+#endif
+
 extern  Configuration                   Config;
 extern  logging::Logger                 logger;
 extern  bool                            transmitFlag;
@@ -104,7 +112,8 @@ namespace POWER_Utils {
         }
     #endif
 
-    #if defined(HAS_AXP192) || defined(HAS_AXP2101)
+    #if defined(HAS_AXP192) || defined(HAS_AXP2101) || defined(HAS_INA219)
+        #if defined(HAS_AXP192) || defined(HAS_AXP2101)
         void activateMeasurement() {
                 PMU.disableTSPinMeasure();
                 PMU.enableBattDetection();
@@ -128,7 +137,7 @@ namespace POWER_Utils {
                 disableChgLed();
             }
         }
-
+        #endif
         String getBatteryInfoCurrent() {
             return batteryChargeDischargeCurrent;
         }
@@ -142,6 +151,9 @@ namespace POWER_Utils {
             #endif
             #ifdef HAS_AXP2101
                 return PMU.getBatteryPercent();
+            #endif
+            #ifdef HAS_INA219
+            return ina219.getCurrent_mA() * INA219_MULTIPLIER;
             #endif
         }
     #endif
@@ -373,6 +385,15 @@ namespace POWER_Utils {
             PMU.setChargeTargetVoltage(XPOWERS_AXP2101_CHG_VOL_4V2);
             PMU.setChargerConstantCurr(XPOWERS_AXP2101_CHG_CUR_800MA);
             PMU.setSysPowerDownVoltage(2600);
+        #endif
+
+        #ifdef HAS_INA219
+            if (ina219.begin()) {
+                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "INA219", "Found INA219");
+            }
+            else {
+                logger.log(logging::LoggerLevel::LOGGER_LEVEL_ERROR, "INA219", "Failed to find INA219");
+            }
         #endif
 
         #ifdef BATTERY_PIN

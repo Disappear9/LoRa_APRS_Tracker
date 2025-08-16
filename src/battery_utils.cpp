@@ -36,6 +36,11 @@
     extern XPowersAXP2101 PMU;
 #endif
 
+#ifdef HAS_INA219
+    #include <Adafruit_INA219.h>
+    extern Adafruit_INA219 ina219;
+#endif
+
 extern      Configuration           Config;
 uint32_t    batteryMeasurmentTime   = 0;
 int         averageReadings         = 20;
@@ -62,6 +67,8 @@ namespace BATTERY_Utils {
     float readBatteryVoltage() {
         #if defined(HAS_AXP192) || defined(HAS_AXP2101)
             return (PMU.getBattVoltage() / 1000.0);
+        #elif defined(HAS_INA219)
+            return ina219.getBusVoltage_V();
         #else
             #ifdef BATTERY_PIN
                 int sampleSum = 0;
