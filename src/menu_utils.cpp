@@ -432,11 +432,7 @@ namespace MENU_Utils {
                 }
                 break;
             case 270:   // 2.Configuration ---> Power Off
-                if (keyDetected) {
-                    displayShow("POWER OFF?", "","Confirm Power Off...","","","<Back   Enter=Confirm");
-                } else {
-                    displayShow("POWER OFF?", "no Keyboard Detected"," Use PWR Button to","Power Off Tracker","",lastLine);
-                }
+                displayShow("POWER OFF?", "","Confirm Power Off...","","","<Back Enter/>=Confirm");
                 break;
 
 //////////
@@ -774,7 +770,7 @@ namespace MENU_Utils {
                     String fourthRowAlt = String(gps.altitude.meters(),0);
                     fourthRowAlt.trim();
                     for (int a = fourthRowAlt.length(); a < 4; a++) {
-                        fourthRowAlt = "0" + fourthRowAlt;
+                        fourthRowAlt = " " + fourthRowAlt;
                     }
                     String fourthRowSpeed = String(gps.speed.kmph(),0);
                     fourthRowSpeed.trim();
